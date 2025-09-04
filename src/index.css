@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global font application */
+body {
+  font-family: 'Rubik', sans-serif;
+}
+
+/* Ensure all text elements use Rubik */
+* {
+  font-family: inherit;
+}
