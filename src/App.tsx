@@ -20,7 +20,14 @@ import {
   Moon,
   Send,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Briefcase,
+  Cloud,
+  GitBranch,
+  Boxes,
+  Globe,
+  Zap,
+  Rocket
 } from 'lucide-react';
 import profileImage from '../assets/photo.png';
 
@@ -52,7 +59,7 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -97,10 +104,10 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Status Message */}
       {submitStatus !== 'idle' && (
-        <div className={`p-4 rounded-lg flex items-center gap-3 ${
+        <div className={`p-4 rounded-xl flex items-center gap-3 ${
           submitStatus === 'success' 
-            ? 'bg-green-100 text-green-800 border border-green-200' 
-            : 'bg-red-100 text-red-800 border border-red-200'
+            ? 'bg-green-50 text-green-800 border border-green-200' 
+            : 'bg-red-50 text-red-800 border border-red-200'
         }`}>
           {submitStatus === 'success' ? (
             <CheckCircle size={20} className="text-green-600" />
@@ -111,48 +118,50 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         </div>
       )}
 
-      <div>
-        <label htmlFor="name" className={`block text-sm font-medium mb-2 transition-colors duration-300 ${
-          isDarkMode ? 'text-gray-200' : 'text-gray-700'
-        }`}>Name</label>
-        <input 
-          type="text" 
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300 ${
-            isDarkMode 
-              ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-              : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-          }`}
-          placeholder="Your Name"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="name" className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${
+            isDarkMode ? 'text-gray-200' : 'text-gray-700'
+          }`}>Full Name</label>
+          <input 
+            type="text" 
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 hover:border-gray-500' 
+                : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 hover:border-gray-300'
+            }`}
+            placeholder="John Doe"
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="email" className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${
+            isDarkMode ? 'text-gray-200' : 'text-gray-700'
+          }`}>Email Address</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 hover:border-gray-500' 
+                : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 hover:border-gray-300'
+            }`}
+            placeholder="john@example.com"
+          />
+        </div>
       </div>
       
       <div>
-        <label htmlFor="email" className={`block text-sm font-medium mb-2 transition-colors duration-300 ${
-          isDarkMode ? 'text-gray-200' : 'text-gray-700'
-        }`}>Email</label>
-        <input 
-          type="email" 
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300 ${
-            isDarkMode 
-              ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-              : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-          }`}
-          placeholder="your.email@example.com"
-        />
-      </div>
-      
-      <div>
-        <label htmlFor="subject" className={`block text-sm font-medium mb-2 transition-colors duration-300 ${
+        <label htmlFor="subject" className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${
           isDarkMode ? 'text-gray-200' : 'text-gray-700'
         }`}>Subject</label>
         <input 
@@ -162,52 +171,52 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
           value={formData.subject}
           onChange={handleChange}
           required
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-300 ${
+          className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
             isDarkMode 
-              ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-              : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+              ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 hover:border-gray-500' 
+              : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 hover:border-gray-300'
           }`}
           placeholder="Project Inquiry"
         />
       </div>
       
       <div>
-        <label htmlFor="message" className={`block text-sm font-medium mb-2 transition-colors duration-300 ${
+        <label htmlFor="message" className={`block text-sm font-semibold mb-3 transition-colors duration-300 ${
           isDarkMode ? 'text-gray-200' : 'text-gray-700'
-        }`}>Message</label>
+        }`}>Project Details</label>
         <textarea 
           id="message"
           name="message"
           value={formData.message}
           onChange={handleChange}
           required
-          rows={6}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-colors duration-300 ${
+          rows={5}
+          className={`w-full px-4 py-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-300 ${
             isDarkMode 
-              ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-              : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+              ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400 hover:border-gray-500' 
+              : 'border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-500 hover:border-gray-300'
           }`}
-          placeholder="Tell me about your project..."
+          placeholder="Tell me about your project goals, timeline, and any specific requirements..."
         ></textarea>
       </div>
       
       <button 
         type="submit"
         disabled={isSubmitting}
-        className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center gap-2 ${
+        className={`w-full py-4 px-8 rounded-xl font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 ${
           isSubmitting
             ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
-            : 'bg-blue-600 text-white hover:bg-blue-700'
+            : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 hover:scale-105 shadow-lg hover:shadow-xl'
         }`}
       >
         {isSubmitting ? (
           <>
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            Sending...
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+            Sending Message...
           </>
         ) : (
           <>
-            <Send size={20} />
+            <Send size={22} />
             Send Message
           </>
         )}
@@ -495,38 +504,42 @@ function App() {
 
         {/* Buttons + Icons Below */}
         <div className="flex flex-col gap-4 sm:gap-6">
-          {/* Primary actions side-by-side */}
-          <div className="flex items-center gap-4 flex-wrap">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
-              <Download size={20} />
-              Download Resume
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact')}
-              className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition-colors duration-200"
-            >
-              Get In Touch
-            </button>
-          </div>
+          {/* Primary actions side-by-side with icons beneath each */}
+          <div className="flex items-start gap-4 flex-wrap">
+            <div className="flex flex-col items-start">
+              <button className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
+                <Download size={20} />
+                Download Resume
+              </button>
+              <div className="flex items-center gap-4 mt-2">
+                <a 
+                  href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="bg-blue-100 p-3 rounded-lg hover:bg-blue-200 transition-colors"
+                >
+                  <Linkedin size={24} className="text-blue-600" />
+                </a>
+                <a 
+                  href="https://github.com/jajulagnanadeepak" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="bg-blue-100 p-3 rounded-lg hover:bg-blue-200 transition-colors"
+                >
+                  <Github size={24} className="text-blue-600" />
+                </a>
+              </div>
+            </div>
 
-          {/* Social icons below */}
-          <div className="flex items-center gap-4">
-            <a 
-              href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-blue-100 p-3 rounded-lg hover:bg-blue-200 transition-colors"
-            >
-              <Linkedin size={24} className="text-blue-600" />
-            </a>
-            <a 
-              href="https://github.com/jajulagnanadeepak" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-blue-100 p-3 rounded-lg hover:bg-blue-200 transition-colors"
-            >
-              <Github size={24} className="text-blue-600" />
-            </a>
+            <div className="flex flex-col items-start">
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2"
+              >
+                <Mail size={20} />
+                Get In Touch
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -551,83 +564,90 @@ function App() {
 
 
 
-      {/* About Section */}
+      {/* About Section - Journey Timeline */}
       <section id="about" className={`py-20 transition-colors duration-300 ${
-        isDarkMode ? 'bg-gray-800' : 'bg-gray-50'
+        isDarkMode ? 'bg-gray-900' : 'bg-white'
       }`}>
-  <div className="max-w-6xl mx-auto px-6">
-    
-    {/* Heading */}
-    <h2 className={`text-4xl font-extrabold text-center mb-4 transition-colors duration-300 ${
-      isDarkMode ? 'text-white' : 'text-gray-900'
-    }`}>
-      About Me
-    </h2>
-    <p className={`text-lg text-center mb-16 transition-colors duration-300 ${
-      isDarkMode ? 'text-gray-300' : 'text-gray-600'
-    }`}>
-      I’m a passionate Full Stack Engineer who loves turning ideas into reality 
-      through scalable, high-performance applications.
-    </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h2 className={`text-4xl md:text-5xl font-medium tracking-tight`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Know Me
+              </span>
+            </h2>
+            <p className={`mt-3 text-lg max-w-2xl mx-auto ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Every line of code tells a story. Myself - a journey of discovery, growth, and build.
+            </p>
+          </div>
 
-    {/* Main Content */}
-    <div className="grid md:grid-cols-3 gap-10 items-stretch">
-      
-      {/* Left Content */}
-      <div className={`md:col-span-2 space-y-6 text-lg leading-relaxed transition-colors duration-300 ${
-        isDarkMode ? 'text-gray-300' : 'text-gray-700'
-      }`}>
-        <p>
-          My journey into technology began with curiosity about how the web works, 
-          and today it has grown into a career where I combine <span className="italic">creativity</span> 
-          and <span className="italic">engineering</span> to solve real-world problems.
-        </p>
-        <p>
-          I specialize in technologies like           <span className="font-semibold text-blue-400">React</span>, 
-          <span className="font-semibold text-blue-400">Node.js</span>, 
-          <span className="font-semibold text-blue-400">Python</span>, and 
-          <span className="font-semibold text-blue-400">Cloud-Native platforms</span>. 
-          I enjoy building intuitive UIs, efficient APIs, and robust backend systems.
-        </p>
-        <p>
-          Leveraging <span className="font-semibold text-blue-400">AWS</span>, 
-          <span className="font-semibold text-blue-400">GCP</span>, and 
-          <span className="font-semibold text-blue-400">containerization (Docker & Kubernetes)</span>, 
-          I create scalable, cloud-ready applications that integrate 
-          <span className="font-semibold"> data-driven insights</span> for smarter decision-making.
-        </p>
-        <p>
-          I’m passionate about exploring <span className="font-semibold">cloud-native architectures</span>, 
-          <span className="font-semibold"> distributed systems</span>, and 
-          <span className="font-semibold"> AI-driven solutions</span>. Continuous learning drives me 
-          to innovate and contribute to open-source communities.
-        </p>
-      </div>
+          {/* Journey Timeline */}
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-purple-500 to-green-500"></div>
+            
+            {/* Timeline Items */}
+            <div className="space-y-8">
+              {/* 2022 - Learning Phase */}
+              <div className="relative flex items-start gap-6">
+                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-3 rounded-full border-4 border-blue-500 shadow-lg z-10`}>
+                  <BookOpen className="text-blue-500" size={20} />
+                </div>
+                <div className={`flex-1 ${isDarkMode ? 'bg-gray-800' : 'bg-blue-50'} rounded-xl p-6 shadow-lg`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-xl font-bold text-blue-500">2022</span>
+                    <div className="h-px flex-1 bg-gradient-to-r from-blue-500 to-transparent"></div>
+                  </div>
+                  <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    The Beginning
+                  </h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
+                    Started with curiosity about how websites work. Built my first HTML page and fell in love with turning ideas into reality through code.
+                  </p>
+                </div>
+              </div>
 
-      {/* Right Content - Truly Centered */}
-      <div className="flex justify-center items-center h-full">
-        <div className={`shadow-md rounded-xl p-6 border transition-colors duration-300 ${
-          isDarkMode 
-            ? 'bg-gray-700 border-gray-600' 
-            : 'bg-white border-gray-200'
-        }`}>
-          <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>Experience</h3>
-          <p className={`transition-colors duration-300 ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Full Stack Development Projects <br />
-            <span className={`text-sm transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>2+ years of hands-on experience</span>
-          </p>
+              {/* 2023 - Growth Phase */}
+              <div className="relative flex items-start gap-6">
+                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-3 rounded-full border-4 border-purple-500 shadow-lg z-10`}>
+                  <Code className="text-purple-500" size={20} />
+                </div>
+                <div className={`flex-1 ${isDarkMode ? 'bg-gray-800' : 'bg-purple-50'} rounded-xl p-6 shadow-lg`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-xl font-bold text-purple-500">2023</span>
+                    <div className="h-px flex-1 bg-gradient-to-r from-purple-500 to-transparent"></div>
+                  </div>
+                  <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Deep Learning
+                  </h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
+                    Mastered JavaScript, explored React, and built full-stack applications. Every bug was a lesson, every feature a victory.
+                  </p>
+                </div>
+              </div>
+
+              {/* 2024+ - Mastery Phase */}
+              <div className="relative flex items-start gap-6">
+                <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} p-3 rounded-full border-4 border-green-500 shadow-lg z-10`}>
+                  <Rocket className="text-green-500" size={20} />
+                </div>
+                <div className={`flex-1 ${isDarkMode ? 'bg-gray-800' : 'bg-green-50'} rounded-xl p-6 shadow-lg`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-xl font-bold text-green-500">2024+</span>
+                    <div className="h-px flex-1 bg-gradient-to-r from-green-500 to-transparent"></div>
+                  </div>
+                  <h3 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Crafting Excellence
+                  </h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-sm`}>
+                    Focused on cloud platforms, performance optimization, and clean architecture. Building production-ready applications and exploring AI integration.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+      </section>
 
       {/* Skills Section */}
       <section id="skills" className={`py-20 transition-colors duration-300 ${
@@ -635,9 +655,11 @@ function App() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold mb-4 transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Technical Skills</h2>
+            <h2 className={`text-4xl md:text-5xl font-medium mb-4`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Technical Skills
+              </span>
+            </h2>
             <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p className={`text-xl transition-colors duration-300 ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
@@ -646,24 +668,108 @@ function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {skills.map((skill, index) => (
-              <div key={index} className={`p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${
-                isDarkMode ? 'bg-gray-700' : 'bg-white'
+              <div key={index} className={`relative overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-700 shadow-lg' : 'bg-gradient-to-br from-white to-blue-50 shadow-lg'
               }`}>
-                <div className="flex items-center mb-4">
-                  <div className={`p-3 rounded-lg mr-4 transition-colors duration-300 ${
-                    isDarkMode ? 'bg-blue-900' : 'bg-blue-100'
-                  }`}>
-                    <skill.icon size={24} className="text-blue-400" />
-                  </div>
-                  <div>
-                    <h3 className={`font-semibold transition-colors duration-300 ${
-                      isDarkMode ? 'text-white' : 'text-gray-900'
-                    }`}>{skill.name}</h3>
-                    <p className="text-sm text-blue-400 font-medium">{skill.level}</p>
+                <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-blue-500/10 blur-2xl"></div>
+                <div className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-100'} p-3 rounded-xl mr-4`}>
+                      <skill.icon size={24} className="text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className={`font-semibold transition-colors duration-300 ${
+                        isDarkMode ? 'text-white' : 'text-gray-900'
+                      }`}>{skill.name}</h3>
+                      <p className="text-sm text-blue-400 font-medium">{skill.level}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Experience Section */}
+      <section id="experience" className={`py-20 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-900' : 'bg-white'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className={`text-4xl md:text-5xl font-medium mb-4`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Experience
+              </span>
+            </h2>
+            <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
+            <p className={`text-xl transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            }`}>Professional journey and key responsibilities</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Experience Card 1 */}
+            <div className={`relative overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+              isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-700 shadow-lg' : 'bg-gradient-to-br from-white to-blue-50 shadow-lg'
+            }`}>
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-500/10 blur-2xl"></div>
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-100'} p-3 rounded-xl`}>
+                    <Briefcase className="text-blue-400" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Full Stack Developer</h3>
+                    <p className="text-blue-400 font-medium">Projects & Freelance • 2+ years</p>
+                  </div>
+                </div>
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4`}>
+                  Building delightful product experiences across frontend and backend with a focus on performance and reliability.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {['React', 'Node.js', 'TypeScript', 'Tailwind', 'MongoDB'].map((tag) => (
+                    <span key={tag} className={`${isDarkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700'} px-3 py-1 rounded-full text-sm font-medium`}>{tag}</span>
+                  ))}
+                </div>
+                <ul className={`space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <li className="flex items-start gap-2"><Zap size={16} className="text-blue-400 mt-1" /> Shipped features end-to-end from UX to deployment.</li>
+                  <li className="flex items-start gap-2"><Zap size={16} className="text-blue-400 mt-1" /> Built accessible, responsive UIs and optimized bundle size.</li>
+                  <li className="flex items-start gap-2"><Zap size={16} className="text-blue-400 mt-1" /> Designed REST APIs and integrated databases with auth.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Experience Card 2 */}
+            <div className={`relative overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+              isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-700 shadow-lg' : 'bg-gradient-to-br from-white to-blue-50 shadow-lg'
+            }`}>
+              <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-500/10 blur-2xl"></div>
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-100'} p-3 rounded-xl`}>
+                    <Cloud className="text-blue-400" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Cloud & DevOps</h3>
+                    <p className="text-blue-400 font-medium">AWS/GCP & CI/CD • 2+ years</p>
+                  </div>
+                </div>
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} mb-4`}>
+                  Enabling reliable delivery through automation, observability, and cloud-native architectures.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {['AWS', 'GCP', 'Docker', 'Kubernetes', 'CI/CD'].map((tag) => (
+                    <span key={tag} className={`${isDarkMode ? 'bg-blue-900 text-blue-200' : 'bg-blue-100 text-blue-700'} px-3 py-1 rounded-full text-sm font-medium`}>{tag}</span>
+                  ))}
+                </div>
+                <ul className={`space-y-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <li className="flex items-start gap-2"><GitBranch size={16} className="text-blue-400 mt-1" /> Built CI/CD pipelines, reduced release friction and lead time.</li>
+                  <li className="flex items-start gap-2"><Boxes size={16} className="text-blue-400 mt-1" /> Containerized services; improved portability and scalability.</li>
+                  <li className="flex items-start gap-2"><Zap size={16} className="text-blue-400 mt-1" /> Implemented monitoring and alerts to maintain uptime.</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -674,9 +780,11 @@ function App() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold mb-4 transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Featured Projects</h2>
+            <h2 className={`text-4xl md:text-5xl font-medium mb-4`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Featured Projects
+              </span>
+            </h2>
             <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
             <p className={`text-xl transition-colors duration-300 ${
               isDarkMode ? 'text-gray-300' : 'text-gray-600'
@@ -685,9 +793,10 @@ function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {projects.map((project: Project, index: number) => (
-              <div key={index} className={`rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 ${
-                isDarkMode ? 'bg-gray-800' : 'bg-white'
+              <div key={index} className={`relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-700 shadow-lg' : 'bg-gradient-to-br from-white to-blue-50 shadow-lg'
               }`}>
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-500/10 blur-2xl"></div>
                 <div className="h-48 bg-gray-200 overflow-hidden">
                   <img 
                     src={project.imageUrl} 
@@ -765,24 +874,32 @@ function App() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold mb-4 transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Education & Certifications</h2>
+            <h2 className={`text-4xl md:text-5xl font-medium mb-4`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Education & Certifications
+              </span>
+            </h2>
             <div className="w-24 h-1 bg-blue-600 mx-auto"></div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             {education.map((edu, index) => (
-              <div key={index} className={`p-6 rounded-xl shadow-md transition-all duration-300 ${
-                isDarkMode ? 'bg-gray-700' : 'bg-white'
+              <div key={index} className={`p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+                isDarkMode ? 'bg-gradient-to-br from-gray-800 to-gray-700 shadow-lg' : 'bg-gradient-to-br from-white to-blue-50 shadow-lg'
               }`}>
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg transition-colors duration-300 ${
-                    isDarkMode ? 'bg-blue-900' : 'bg-blue-100'
-                  }`}>
-                    <BookOpen size={24} className="text-blue-400" />
+                <div className="flex flex-col items-start gap-4">
+                  <div className="flex flex-col items-center sm:min-w-[56px]">
+                    <div className={`${isDarkMode ? 'bg-blue-900' : 'bg-blue-100'} p-3 rounded-xl transition-colors duration-300`}>
+                      <BookOpen size={24} className="text-blue-400" />
+                    </div>
+                    <p className={`mt-2 text-xs italic text-center leading-relaxed transition-colors duration-300 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>
+                      From schooling to intermediate, I learned fast, built strong
+                      fundamentals, and kept improving with curiosity and grit.
+                    </p>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 w-full">
                     <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${
                       isDarkMode ? 'text-white' : 'text-gray-900'
                     }`}>{edu.degree}</h3>
@@ -837,106 +954,119 @@ function App() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className={`py-20 transition-colors duration-300 ${
-        isDarkMode ? 'bg-gray-900' : 'bg-white'
+      <section id="contact" className={`py-24 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-blue-50'
       }`}>
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <h2 className={`text-4xl font-bold mb-4 transition-colors duration-300 ${
-        isDarkMode ? 'text-white' : 'text-gray-900'
-      }`}>Get In Touch</h2>
-      <div className="w-24 h-1 bg-blue-600 mx-auto mb-6"></div>
-      <p className={`text-xl transition-colors duration-300 ${
-        isDarkMode ? 'text-gray-300' : 'text-gray-600'
-      }`}>Let's discuss your next project</p>
-    </div>
-
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-      {/* LEFT CONTENT */}
-      <div className="space-y-10 mt-20">
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
-            isDarkMode ? 'bg-blue-900' : 'bg-blue-100'
-          }`}>
-            <Mail size={24} className="text-blue-400" />
-          </div>
-          <div>
-            <h3 className={`font-semibold transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Email</h3>
-            <p className={`transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>jajulagnanadeepak@gmai.com</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
-            isDarkMode ? 'bg-blue-900' : 'bg-blue-100'
-          }`}>
-            <Phone size={24} className="text-blue-400" />
-          </div>
-          <div>
-            <h3 className={`font-semibold transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Phone</h3>
-            <p className={`transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>+91 7569701686</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-lg transition-colors duration-300 ${
-            isDarkMode ? 'bg-blue-900' : 'bg-blue-100'
-          }`}>
-            <MapPin size={24} className="text-blue-400" />
-          </div>
-          <div>
-            <h3 className={`font-semibold transition-colors duration-300 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>Location</h3>
-            <p className={`transition-colors duration-300 ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>Rajumundry , Andhra Pradesh</p>
-          </div>
-        </div>
-
-        <div className="pt-10">
-          <h3 className={`font-semibold mb-4 transition-colors duration-300 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>Follow Me</h3>
-          <div className="flex gap-4">
-            <a href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375" target="_blank" rel="noopener noreferrer" className={`p-3 rounded-lg transition-colors duration-300 ${
-              isDarkMode ? 'bg-blue-900 hover:bg-blue-800' : 'bg-blue-100 hover:bg-blue-200'
-            }`}>
-              <Linkedin size={24} className="text-blue-400" />
-            </a>
-            <a href="https://github.com/jajulagnanadeepak" target="_blank" rel="noopener noreferrer" className={`p-3 rounded-lg transition-colors duration-300 ${
-              isDarkMode ? 'bg-blue-900 hover:bg-blue-800' : 'bg-blue-100 hover:bg-blue-200'
-            }`}>
-              <Github size={24} className="text-blue-400" />
-            </a>
-          </div>
-        </div>
-
-        <div className="mt-12">
-          <div className="w-full bg-blue-600 text-white rounded-lg py-5 px-6 text-center font-medium hover:bg-blue-700 transition-colors duration-200">
-            <p className="text-base opacity-90">
-              Open to new ideas, projects, and collaborations.
-            </p>
-            <p className="mt-1 text-xl font-semibold">
-              Let’s build something amazing together
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-20">
+            <h2 className={`text-4xl md:text-5xl font-medium mb-6`}>
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Get In Touch
+              </span>
+            </h2>
+            <p className={`text-xl max-w-3xl mx-auto leading-relaxed ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              Have a project in mind? Let's discuss it Here:
             </p>
           </div>
-        </div>
-      </div>
 
-             {/* RIGHT CONTENT */}
-       <ContactForm isDarkMode={isDarkMode} />
-    </div>
-  </div>
-</section>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Contact Info Cards */}
+            <div className="h-full flex flex-col justify-between space-y-4">
+              {/* Email Card */}
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex-1 border-l-4 border-blue-500`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`${isDarkMode ? 'bg-gradient-to-br from-blue-600 to-blue-800' : 'bg-gradient-to-br from-blue-500 to-blue-600'} p-3 rounded-lg shadow-lg`}>
+                    <Mail className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Email</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Drop me a line</p>
+                  </div>
+                </div>
+                <a href="mailto:jajulagnanadeepak@gmail.com" className={`text-blue-500 hover:text-blue-600 font-medium transition-colors`}>
+                  jajulagnanadeepak@gmail.com
+                </a>
+              </div>
+
+              {/* Phone Card */}
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex-1 border-l-4 border-green-500`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`${isDarkMode ? 'bg-gradient-to-br from-green-600 to-green-800' : 'bg-gradient-to-br from-green-500 to-green-600'} p-3 rounded-lg shadow-lg`}>
+                    <Phone className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Phone</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Let's talk</p>
+                  </div>
+                </div>
+                <a href="tel:+917569701686" className={`text-green-500 hover:text-green-600 font-medium transition-colors`}>
+                  +91 7569701686
+                </a>
+              </div>
+
+              {/* Location Card */}
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex-1 border-l-4 border-purple-500`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`${isDarkMode ? 'bg-gradient-to-br from-purple-600 to-purple-800' : 'bg-gradient-to-br from-purple-500 to-purple-600'} p-3 rounded-lg shadow-lg`}>
+                    <MapPin className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Location</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Based in</p>
+                  </div>
+                </div>
+                <p className={`text-purple-500 font-medium`}>
+                  Rajahmundry, Andhra Pradesh
+                </p>
+              </div>
+
+              {/* Social Links */}
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-6 shadow-lg flex-1 border-l-4 border-orange-500`}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`${isDarkMode ? 'bg-gradient-to-br from-orange-600 to-orange-800' : 'bg-gradient-to-br from-orange-500 to-orange-600'} p-3 rounded-lg shadow-lg`}>
+                    <Globe className="text-white" size={24} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Connect</h3>
+                    <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Social links</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <a href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375" target="_blank" rel="noopener noreferrer" className={`${isDarkMode ? 'bg-gradient-to-br from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900' : 'bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700'} p-3 rounded-lg transition-all duration-300 hover:scale-110 shadow-lg`}>
+                    <Linkedin size={20} className="text-white" />
+                  </a>
+                  <a href="https://github.com/jajulagnanadeepak" target="_blank" rel="noopener noreferrer" className={`${isDarkMode ? 'bg-gradient-to-br from-gray-600 to-gray-800 hover:from-gray-700 hover:to-gray-900' : 'bg-gradient-to-br from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700'} p-3 rounded-lg transition-all duration-300 hover:scale-110 shadow-lg`}>
+                    <Github size={20} className="text-white" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="lg:col-span-2">
+              <div className={`${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-2xl p-6 shadow-xl h-full`}>
+                <div className="mb-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`${isDarkMode ? 'bg-gradient-to-br from-blue-600 to-blue-800' : 'bg-gradient-to-br from-blue-500 to-blue-600'} p-3 rounded-xl shadow-lg`}>
+                      <Send className="text-white" size={24} />
+                    </div>
+                    <div>
+                      <h3 className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                        Send a Message
+                      </h3>
+                      <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                        Let's discuss your project
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <ContactForm isDarkMode={isDarkMode} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className={`py-12 transition-colors duration-300 ${

@@ -134,3 +134,5 @@ const response = await fetch('http://localhost:5000/send-message', {
 2. Configure environment variables
 3. Deploy to your preferred platform (Heroku, Vercel, Railway, etc.)
 4. Update CORS origins to include your production domain
+
+

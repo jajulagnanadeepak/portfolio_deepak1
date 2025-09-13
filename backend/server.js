@@ -133,14 +133,137 @@ app.post('/send-message', async (req, res) => {
           to: process.env.EMAIL_USER, // Send to yourself
           subject: `New Contact Form Message: ${subject}`,
           html: `
-            <h2>New Contact Form Submission</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-            <p><strong>Message:</strong></p>
-            <p>${message.replace(/\n/g, '<br>')}</p>
-            <hr>
-            <p><em>Sent from your portfolio contact form</em></p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>New Contact Form Message</title>
+              <style>
+                body {
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  line-height: 1.6;
+                  color: #333;
+                  max-width: 600px;
+                  margin: 0 auto;
+                  padding: 20px;
+                  background-color: #f8f9fa;
+                }
+                .container {
+                  background-color: #ffffff;
+                  border-radius: 12px;
+                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                  overflow: hidden;
+                }
+                .header {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  padding: 30px;
+                  text-align: center;
+                }
+                .header h1 {
+                  margin: 0;
+                  font-size: 24px;
+                  font-weight: 600;
+                }
+                .content {
+                  padding: 30px;
+                }
+                .info-grid {
+                  display: grid;
+                  gap: 15px;
+                  margin-bottom: 25px;
+                }
+                .info-item {
+                  display: flex;
+                  align-items: center;
+                  padding: 12px 0;
+                  border-bottom: 1px solid #e9ecef;
+                }
+                .info-item:last-child {
+                  border-bottom: none;
+                }
+                .info-label {
+                  font-weight: 600;
+                  color: #495057;
+                  min-width: 80px;
+                  margin-right: 15px;
+                }
+                .info-value {
+                  color: #212529;
+                  flex: 1;
+                }
+                .message-section {
+                  margin-top: 25px;
+                }
+                .message-label {
+                  font-weight: 600;
+                  color: #495057;
+                  margin-bottom: 15px;
+                  font-size: 16px;
+                }
+                .message-box {
+                  background-color: #f8f9fa;
+                  border: 2px solid #e9ecef;
+                  border-radius: 8px;
+                  padding: 20px;
+                  margin: 15px 0;
+                  line-height: 1.7;
+                  font-size: 15px;
+                  color: #212529;
+                  white-space: pre-wrap;
+                  word-wrap: break-word;
+                }
+                .footer {
+                  background-color: #f8f9fa;
+                  padding: 20px 30px;
+                  text-align: center;
+                  color: #6c757d;
+                  font-size: 14px;
+                  border-top: 1px solid #e9ecef;
+                }
+                .timestamp {
+                  color: #6c757d;
+                  font-size: 12px;
+                  margin-top: 10px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1>📧 New Contact Form Message</h1>
+                </div>
+                
+                <div class="content">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <div class="info-label">👤 Name:</div>
+                      <div class="info-value">${name}</div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">📧 Email:</div>
+                      <div class="info-value"><a href="mailto:${email}" style="color: #007bff; text-decoration: none;">${email}</a></div>
+                    </div>
+                    <div class="info-item">
+                      <div class="info-label">📝 Subject:</div>
+                      <div class="info-value">${subject}</div>
+                    </div>
+                  </div>
+                  
+                  <div class="message-section">
+                    <div class="message-label">💬 Message:</div>
+                    <div class="message-box">${message.replace(/\n/g, '\n')}</div>
+                  </div>
+                </div>
+                
+                <div class="footer">
+                  <p><em>Sent from your portfolio contact form</em></p>
+                  <div class="timestamp">Received: ${new Date().toLocaleString()}</div>
+                </div>
+              </div>
+            </body>
+            </html>
           `
         };
 
@@ -243,3 +366,5 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
+
