@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import EcommerceDemo from './EcommerceDemo';
-import TaskManagerDemo from './TaskManagerDemo';
 import WeatherDemo from './WeatherDemo';
 
 const DemoRouter = () => {

@@ -27,6 +27,10 @@ interface Certification {
   name: string;
   issuer: string;
   url: string;
+  issueDate?: string; // ISO date string
+  imageUrl?: string;
+  createdAt?: string; // ISO timestamp
+  updatedAt?: string; // ISO timestamp
 }
 
 const AdminDashboard = () => {
@@ -78,14 +82,28 @@ const AdminDashboard = () => {
   const [certifications, setCertifications] = useState<Certification[]>(() => {
     const saved = localStorage.getItem('adminCertifications');
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Add imageUrl if missing for existing certifications
+      const imageMap: { [key: string]: string } = {
+        'AWS Certified Developer Associate': '/aws.png',
+        'Google Cloud Professional Developer': '/orl.png',
+        'MongoDB Certified Developer': '/db.png',
+        'AWS Certified practitioner': '/orl.png',
+        'Oracle Cloud Associate': '/ava.png'
+      };
+      return parsed.map((cert: Certification) => ({
+        ...cert,
+        imageUrl: cert.imageUrl || imageMap[cert.name] || ''
+      }));
     }
     // Default certifications
+    const now = new Date().toISOString();
     return [
-      { id: '1', name: 'AWS Certified Developer Associate', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-badge-id/public_url' },
-      { id: '2', name: 'Google Cloud Professional Developer', issuer: 'Google Cloud', url: 'https://www.credly.com/badges/your-gcp-badge-id/public_url' },
-      { id: '3', name: 'MongoDB Certified Developer', issuer: 'MongoDB', url: 'https://www.credly.com/badges/your-mongodb-badge-id/public_url' },
-      { id: '4', name: 'AWS Certified practitioner', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-practitioner-badge-id/public_url' }
+      { id: '1', name: 'AWS Certified Developer Associate', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/aws.png', createdAt: now, updatedAt: now },
+      { id: '2', name: 'Google Cloud Professional Developer', issuer: 'Google Cloud', url: 'https://www.credly.com/badges/your-gcp-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/orl.png', createdAt: now, updatedAt: now },
+      { id: '3', name: 'MongoDB Certified Developer', issuer: 'MongoDB', url: 'https://www.credly.com/badges/your-mongodb-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/db.png', createdAt: now, updatedAt: now },
+      { id: '4', name: 'AWS Certified practitioner', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-practitioner-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/orl.png', createdAt: now, updatedAt: now },
+      { id: '5', name: 'Oracle Cloud Associate', issuer: 'Oracle', url: 'https://www.credly.com/badges/your-oracle-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/ava.png', createdAt: now, updatedAt: now }
     ];
   });
 
@@ -98,16 +116,17 @@ const AdminDashboard = () => {
     localStorage.setItem('adminCertifications', JSON.stringify(certifications));
   }, [certifications]);
 
-  // Check authentication
+  // Check authentication via token (route guard also protects)
   useEffect(() => {
-    const isAuthenticated = localStorage.getItem('adminAuthenticated');
-    if (!isAuthenticated) {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
       navigate('/admin/login');
     }
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminAuthenticated');
+    localStorage.removeItem('adminToken');
     localStorage.removeItem('adminUsername');
     navigate('/admin/login');
   };
@@ -131,15 +150,32 @@ const AdminDashboard = () => {
     }
   };
 
-  const addCertification = (certification: Omit<Certification, 'id'>) => {
-    const newCertification = { ...certification, id: Date.now().toString() };
+  const addCertification = (certification: Omit<Certification, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const now = new Date().toISOString();
+    const issueDateIso = certification.issueDate && certification.issueDate.length > 10 ? certification.issueDate : (certification.issueDate ? new Date(certification.issueDate).toISOString() : now);
+    const newCertification: Certification = { 
+      ...certification, 
+      issueDate: issueDateIso, 
+      id: Date.now().toString(), 
+      createdAt: now, 
+      updatedAt: now 
+    };
     setCertifications([...certifications, newCertification]);
     setShowAddCertification(false);
   };
 
   const updateCertification = (updatedCertification: Certification | Omit<Certification, 'id'>) => {
     if ('id' in updatedCertification) {
-      setCertifications(certifications.map(c => c.id === updatedCertification.id ? updatedCertification : c));
+      const now = new Date().toISOString();
+      const adjusted: Certification = {
+        ...certifications.find(c => c.id === updatedCertification.id)!,
+        ...updatedCertification,
+        updatedAt: now,
+        issueDate: (updatedCertification as Certification).issueDate
+          ? ((updatedCertification as Certification).issueDate!.length > 10 ? (updatedCertification as Certification).issueDate : new Date((updatedCertification as Certification).issueDate!).toISOString())
+          : certifications.find(c => c.id === updatedCertification.id)!.issueDate
+      };
+      setCertifications(certifications.map(c => c.id === adjusted.id ? adjusted : c));
     }
     setEditingCertification(null);
   };
@@ -279,25 +315,57 @@ const AdminDashboard = () => {
           <div>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Manage Certifications</h2>
-              <button
-                onClick={() => setShowAddCertification(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-              >
-                <Plus size={16} />
-                Add Certification
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowAddCertification(true)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Add Certification
+                </button>
+                <button
+                  onClick={() => {
+                    const example: Omit<Certification, 'id' | 'createdAt' | 'updatedAt'> = {
+                      name: 'Certified Postman Tester',
+                      issuer: 'Test University',
+                      url: 'https://www.test-cert.com/123456789',
+                      issueDate: '2024-06-01T00:00:00.000+00:00',
+                      imageUrl: 'https://example.com/badge.png'
+                    };
+                    addCertification(example);
+                  }}
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors"
+                  title="Insert example certification"
+                >
+                  Quick Add Example
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {certifications.map((certification) => (
                 <div key={certification.id} className="bg-white rounded-xl shadow-md p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <Award size={24} className="text-yellow-600" />
-                    </div>
+                    {certification.imageUrl ? (
+                      <img src={certification.imageUrl} alt={certification.name} className="w-12 h-12 rounded-full object-cover border" />
+                    ) : (
+                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <Award size={24} className="text-yellow-600" />
+                      </div>
+                    )}
                     <div>
                       <h3 className="font-semibold text-gray-900">{certification.name}</h3>
                       <p className="text-sm text-blue-600">{certification.issuer}</p>
+                      {certification.issueDate && (
+                        <p className="text-xs text-gray-500">Issued: {new Date(certification.issueDate).toLocaleDateString()}</p>
+                      )}
+                      <a href={certification.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">View Credential</a>
+                      {(certification.createdAt || certification.updatedAt) && (
+                        <div className="mt-1 text-[11px] text-gray-400">
+                          {certification.createdAt && <span>Created: {new Date(certification.createdAt).toLocaleString()}</span>}
+                          {certification.updatedAt && <span className="ml-2">Updated: {new Date(certification.updatedAt).toLocaleString()}</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -316,6 +384,21 @@ const AdminDashboard = () => {
                       Delete
                     </button>
                   </div>
+                  <details className="mt-4">
+                    <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">JSON</summary>
+                    <pre className="mt-2 p-3 bg-gray-50 border rounded text-xs overflow-x-auto">
+{JSON.stringify({
+  name: certification.name,
+  issuer: certification.issuer,
+  url: certification.url,
+  issueDate: certification.issueDate,
+  imageUrl: certification.imageUrl,
+  createdAt: certification.createdAt,
+  updatedAt: certification.updatedAt,
+  __v: 0
+}, null, 2)}
+                    </pre>
+                  </details>
                 </div>
               ))}
             </div>
@@ -500,7 +583,9 @@ const CertificationModal = ({
   const [formData, setFormData] = useState({
     name: certification?.name || '',
     issuer: certification?.issuer || '',
-    url: certification?.url || ''
+    url: certification?.url || '',
+    issueDate: certification?.issueDate ? certification.issueDate.substring(0, 10) : '',
+    imageUrl: certification?.imageUrl || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -558,6 +643,27 @@ const CertificationModal = ({
               onChange={(e) => setFormData({...formData, url: e.target.value})}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Issue Date</label>
+            <input
+              type="date"
+              value={formData.issueDate}
+              onChange={(e) => setFormData({...formData, issueDate: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL (optional)</label>
+            <input
+              type="url"
+              value={formData.imageUrl}
+              onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="https://example.com/badge.png"
             />
           </div>
 

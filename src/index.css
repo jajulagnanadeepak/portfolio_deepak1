@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Scale entire site slightly smaller: set root font-size to 90% so rem-based Tailwind units shrink */
+html {
+  font-size: 90%;
+}
+
 /* Global font application */
 body {
   font-family: 'Rubik', sans-serif;
@@ -10,4 +15,14 @@ body {
 /* Ensure all text elements use Rubik */
 * {
   font-family: inherit;
+}
+
+/* Disable Tailwind's pulse animations globally where present (keeps markup unchanged) */
+.animate-pulse {
+  animation: none !important;
+}
+
+/* Optional: prevent small hover scale on primary send button if kept via classes */
+.no-hover-scale:hover {
+  transform: none !important;
 }
