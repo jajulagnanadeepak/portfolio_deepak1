@@ -33,6 +33,9 @@ import {
   Cpu,
   Terminal
 } from 'lucide-react';
+
+const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-back-hdau.onrender.com').replace(/\/$/, '');
+
 // Use the image placed in `public/photo.webp` so Vite serves it from the root
 const profileImage = '/photo.webp';
 
@@ -104,7 +107,7 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('http://localhost:5000/send-message', {
+      const response = await fetch(`${API_BASE}/send-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
