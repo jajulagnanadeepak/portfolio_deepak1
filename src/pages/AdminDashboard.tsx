@@ -12,8 +12,6 @@ import {
   X
 } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_BASE;
-
 interface Project {
   id: string;
   title: string;
@@ -28,8 +26,11 @@ interface Certification {
   id: string;
   name: string;
   issuer: string;
-  credentialUrl: string;
+  url: string;
+  issueDate?: string; // ISO date string
   imageUrl?: string;
+  createdAt?: string; // ISO timestamp
+  updatedAt?: string; // ISO timestamp
 }
 
 const AdminDashboard = () => {
@@ -40,78 +41,99 @@ const AdminDashboard = () => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [editingCertification, setEditingCertification] = useState<Certification | null>(null);
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [certifications, setCertifications] = useState<Certification[]>([]);
-
-  const mapProject = (item: any): Project => ({
-    id: String(item.id || item._id || ''),
-    title: item.title || '',
-    description: item.description || '',
-    technologies: Array.isArray(item.technologies) ? item.technologies : [],
-    liveUrl: item.liveUrl || '',
-    githubUrl: item.githubUrl || '',
-    imageUrl: item.imageUrl || ''
+  // Get data from localStorage or use defaults
+  const [projects, setProjects] = useState<Project[]>(() => {
+    const saved = localStorage.getItem('adminProjects');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Default projects
+    return [
+      {
+        id: '1',
+        title: 'E-Commerce Platform',
+        description: 'A full-stack e-commerce solution built with React, Node.js, and PostgreSQL. Features include user authentication, payment processing, and admin dashboard.',
+        technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe API'],
+        liveUrl: '/demo/ecommerce',
+        githubUrl: 'https://github.com/jajulagnanadeepak',
+        imageUrl: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600'
+      },
+      {
+        id: '2',
+        title: 'Task Management App',
+        description: 'A collaborative task management application with real-time updates, drag-and-drop functionality, and team collaboration features.',
+        technologies: ['React', 'Socket.io', 'MongoDB', 'Express'],
+        liveUrl: '/demo/taskmanager',
+        githubUrl: 'https://github.com/jajulagnanadeepak',
+        imageUrl: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600'
+      },
+      {
+        id: '3',
+        title: 'Weather Analytics Dashboard',
+        description: 'A data visualization dashboard that displays weather patterns and analytics using third-party APIs and interactive charts.',
+        technologies: ['Vue.js', 'Chart.js', 'Weather API', 'Tailwind CSS'],
+        liveUrl: '/demo/weather',
+        githubUrl: 'https://github.com/jajulagnanadeepak',
+        imageUrl: 'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&w=600'
+      }
+    ];
   });
 
-  const mapCertification = (item: any): Certification => ({
-    id: String(item.id || item._id || ''),
-    name: item.name || '',
-    issuer: item.issuer || '',
-    credentialUrl: item.credentialUrl || '',
-    imageUrl: item.imageUrl || ''
+  const [certifications, setCertifications] = useState<Certification[]>(() => {
+    const saved = localStorage.getItem('adminCertifications');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Add imageUrl if missing for existing certifications
+      const imageMap: { [key: string]: string } = {
+        'AWS Certified Developer Associate': '/aws.png',
+        'Google Cloud Professional Developer': '/orl.png',
+        'MongoDB Certified Developer': '/db.png',
+        'AWS Certified practitioner': '/orl.png',
+        'Oracle Cloud Associate': '/ava.png'
+      };
+      return parsed.map((cert: Certification) => ({
+        ...cert,
+        imageUrl: cert.imageUrl || imageMap[cert.name] || ''
+      }));
+    }
+    // Default certifications
+    const now = new Date().toISOString();
+    return [
+      { id: '1', name: 'AWS Certified Developer Associate', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/aws.png', createdAt: now, updatedAt: now },
+      { id: '2', name: 'Google Cloud Professional Developer', issuer: 'Google Cloud', url: 'https://www.credly.com/badges/your-gcp-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/orl.png', createdAt: now, updatedAt: now },
+      { id: '3', name: 'MongoDB Certified Developer', issuer: 'MongoDB', url: 'https://www.credly.com/badges/your-mongodb-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/db.png', createdAt: now, updatedAt: now },
+      { id: '4', name: 'AWS Certified practitioner', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-practitioner-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/orl.png', createdAt: now, updatedAt: now },
+      { id: '5', name: 'Oracle Cloud Associate', issuer: 'Oracle', url: 'https://www.credly.com/badges/your-oracle-badge-id/public_url', issueDate: now.substring(0,10), imageUrl: '/ava.png', createdAt: now, updatedAt: now }
+    ];
   });
 
-  const fetchProjects = async () => {
-    if (!API) return;
-    const res = await fetch(`${API}/api/v1/projects`);
-    const data = await res.json().catch(() => ({}));
-    setProjects(Array.isArray(data?.data) ? data.data.map(mapProject) : []);
-  };
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('adminProjects', JSON.stringify(projects));
+  }, [projects]);
 
-  const fetchCertifications = async () => {
-    if (!API) return;
-    const res = await fetch(`${API}/api/v1/certifications`);
-    const data = await res.json().catch(() => ({}));
-    setCertifications(Array.isArray(data?.data) ? data.data.map(mapCertification) : []);
-  };
+  useEffect(() => {
+    localStorage.setItem('adminCertifications', JSON.stringify(certifications));
+  }, [certifications]);
 
   // Check authentication via token (route guard also protects)
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/admin/login');
-      return;
     }
-    fetchProjects();
-    fetchCertifications();
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('adminAuthenticated');
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUsername');
     navigate('/admin/login');
   };
 
-  const addProject = async (data: Omit<Project, 'id'>) => {
-    if (!API) return;
-    const token = localStorage.getItem('token');
-    const formattedData = {
-      ...data,
-      technologies: (Array.isArray(data.technologies) ? data.technologies.join(',') : String(data.technologies || ''))
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean),
-    };
-
-    await fetch(`${API}/api/v1/projects`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formattedData),
-    });
-
-    await fetchProjects();
+  const addProject = (project: Omit<Project, 'id'>) => {
+    const newProject = { ...project, id: Date.now().toString() };
+    setProjects([...projects, newProject]);
     setShowAddProject(false);
   };
 
@@ -128,18 +150,32 @@ const AdminDashboard = () => {
     }
   };
 
-  const addCertification = (certification: Omit<Certification, 'id'>) => {
-    const newCertification: Certification = {
-      ...certification,
-      id: Date.now().toString(),
+  const addCertification = (certification: Omit<Certification, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const now = new Date().toISOString();
+    const issueDateIso = certification.issueDate && certification.issueDate.length > 10 ? certification.issueDate : (certification.issueDate ? new Date(certification.issueDate).toISOString() : now);
+    const newCertification: Certification = { 
+      ...certification, 
+      issueDate: issueDateIso, 
+      id: Date.now().toString(), 
+      createdAt: now, 
+      updatedAt: now 
     };
-    setCertifications((prev) => [...prev, newCertification]);
+    setCertifications([...certifications, newCertification]);
     setShowAddCertification(false);
   };
 
   const updateCertification = (updatedCertification: Certification | Omit<Certification, 'id'>) => {
     if ('id' in updatedCertification) {
-      setCertifications(certifications.map(c => c.id === updatedCertification.id ? updatedCertification : c));
+      const now = new Date().toISOString();
+      const adjusted: Certification = {
+        ...certifications.find(c => c.id === updatedCertification.id)!,
+        ...updatedCertification,
+        updatedAt: now,
+        issueDate: (updatedCertification as Certification).issueDate
+          ? ((updatedCertification as Certification).issueDate!.length > 10 ? (updatedCertification as Certification).issueDate : new Date((updatedCertification as Certification).issueDate!).toISOString())
+          : certifications.find(c => c.id === updatedCertification.id)!.issueDate
+      };
+      setCertifications(certifications.map(c => c.id === adjusted.id ? adjusted : c));
     }
     setEditingCertification(null);
   };
@@ -289,10 +325,11 @@ const AdminDashboard = () => {
                 </button>
                 <button
                   onClick={() => {
-                    const example: Omit<Certification, 'id'> = {
+                    const example: Omit<Certification, 'id' | 'createdAt' | 'updatedAt'> = {
                       name: 'Certified Postman Tester',
                       issuer: 'Test University',
-                      credentialUrl: 'https://www.test-cert.com/123456789',
+                      url: 'https://www.test-cert.com/123456789',
+                      issueDate: '2024-06-01T00:00:00.000+00:00',
                       imageUrl: 'https://example.com/badge.png'
                     };
                     addCertification(example);
@@ -319,7 +356,16 @@ const AdminDashboard = () => {
                     <div>
                       <h3 className="font-semibold text-gray-900">{certification.name}</h3>
                       <p className="text-sm text-blue-600">{certification.issuer}</p>
-                      <a href={certification.credentialUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">View Credential</a>
+                      {certification.issueDate && (
+                        <p className="text-xs text-gray-500">Issued: {new Date(certification.issueDate).toLocaleDateString()}</p>
+                      )}
+                      <a href={certification.url} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline">View Credential</a>
+                      {(certification.createdAt || certification.updatedAt) && (
+                        <div className="mt-1 text-[11px] text-gray-400">
+                          {certification.createdAt && <span>Created: {new Date(certification.createdAt).toLocaleString()}</span>}
+                          {certification.updatedAt && <span className="ml-2">Updated: {new Date(certification.updatedAt).toLocaleString()}</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -344,8 +390,12 @@ const AdminDashboard = () => {
 {JSON.stringify({
   name: certification.name,
   issuer: certification.issuer,
-  credentialUrl: certification.credentialUrl,
-  imageUrl: certification.imageUrl
+  url: certification.url,
+  issueDate: certification.issueDate,
+  imageUrl: certification.imageUrl,
+  createdAt: certification.createdAt,
+  updatedAt: certification.updatedAt,
+  __v: 0
 }, null, 2)}
                     </pre>
                   </details>
@@ -533,7 +583,8 @@ const CertificationModal = ({
   const [formData, setFormData] = useState({
     name: certification?.name || '',
     issuer: certification?.issuer || '',
-    credentialUrl: certification?.credentialUrl || '',
+    url: certification?.url || '',
+    issueDate: certification?.issueDate ? certification.issueDate.substring(0, 10) : '',
     imageUrl: certification?.imageUrl || ''
   });
 
@@ -585,12 +636,22 @@ const CertificationModal = ({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Credential URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">URL</label>
             <input
               type="url"
-              value={formData.credentialUrl}
-              onChange={(e) => setFormData({...formData, credentialUrl: e.target.value})}
+              value={formData.url}
+              onChange={(e) => setFormData({...formData, url: e.target.value})}
               required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Issue Date</label>
+            <input
+              type="date"
+              value={formData.issueDate}
+              onChange={(e) => setFormData({...formData, issueDate: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

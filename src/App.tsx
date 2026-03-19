@@ -77,7 +77,7 @@ interface Project {
 interface Certification {
   name: string;
   issuer: string;
-  credentialUrl: string;
+  url: string;
   imageUrl?: string;
 }
 
@@ -306,39 +306,54 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Listen for changes in localStorage to update projects
   useEffect(() => {
-    const fetchProjects = async () => {
-      if (!API) return;
-      try {
-        const res = await fetch(`${API}/api/v1/projects`);
-        const data = await res.json().catch(() => ({}));
-        setProjects(data.data);
-      } catch {
-        setProjects([]);
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('adminProjects');
+      if (saved) {
+        setProjects(JSON.parse(saved));
       }
     };
 
-    const fetchCertifications = async () => {
-      if (!API) return;
-      try {
-        const res = await fetch(`${API}/api/v1/certifications`);
-        const data = await res.json().catch(() => ({}));
-        const mapped = Array.isArray(data?.data)
-          ? data.data.map((cert: any) => ({
-              name: cert.name,
-              issuer: cert.issuer,
-              credentialUrl: cert.credentialUrl,
-              imageUrl: cert.imageUrl,
-            }))
-          : [];
-        setCertifications(mapped);
-      } catch {
-        setCertifications([]);
+    window.addEventListener('storage', handleStorageChange);
+    // Also check for changes when the component mounts
+    handleStorageChange();
+
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  // Listen for changes in localStorage to update certifications
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const saved = localStorage.getItem('adminCertifications');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Add imageUrl if missing for existing certifications
+        const imageMap: { [key: string]: string } = {
+          'AWS Certified Developer Associate': '/aws.webp',
+          'Google Cloud Professional Developer': '/orl.webp',
+          'MongoDB Certified Developer': '/db.webp',
+          'AWS Certified practitioner': '/orl.webp',
+          'Oracle Cloud Associate': '/ava.webp'
+        };
+        const updated = parsed.map((cert: any) => ({
+          ...cert,
+          imageUrl: cert.imageUrl || imageMap[cert.name] || ''
+        }));
+        setCertifications(updated);
+        // Save updated certifications back to localStorage if they were missing imageUrl
+        const needsUpdate = parsed.some((cert: any) => !cert.imageUrl && imageMap[cert.name]);
+        if (needsUpdate) {
+          localStorage.setItem('adminCertifications', JSON.stringify(updated));
+        }
       }
     };
 
-    fetchProjects();
-    fetchCertifications();
+    window.addEventListener('storage', handleStorageChange);
+    // Also check for changes when the component mounts
+    handleStorageChange();
+
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const scrollToTop = () => {
@@ -368,7 +383,23 @@ function App() {
     { name: 'App Dev', icon: MongoDBIcon, level: 'Intermediate' }
   ];
 
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState(() => {
+    const saved = localStorage.getItem('adminProjects');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    // Default projects
+    return [
+      {
+        title: 'E-Commerce Platform',
+        description: 'A full-stack e-commerce solution built with React, Node.js, and PostgreSQL. Features include user authentication, payment processing, and admin dashboard.',
+        technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe API'],
+        liveUrl: '/demo/ecommerce',
+        githubUrl: 'https://github.com/jajulagnanadeepak',
+        imageUrl: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&w=600'
+      },
+    ];
+  });
 
   const education = [
     {
@@ -394,7 +425,32 @@ function App() {
     }
   ];
 
-  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [certifications, setCertifications] = useState(() => {
+    const saved = localStorage.getItem('adminCertifications');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Add imageUrl if missing for existing certifications
+      const imageMap: { [key: string]: string } = {
+        'AWS Certified Developer Associate': '/aws.webp',
+        'Google Cloud Professional Developer': '/orl.webp',
+        'MongoDB Certified Developer': '',
+        'AWS Certified practitioner': '/orl.webp',
+        'Oracle Cloud Associate': '/ava.webp'
+      };
+      return parsed.map((cert: any) => ({
+        ...cert,
+        imageUrl: cert.imageUrl || imageMap[cert.name] || ''
+      }));
+    }
+    // Default certifications
+    return [
+      { name: 'AWS Certified Developer Associate', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-badge-id/public_url', imageUrl: '/aws.webp' },
+      { name: 'Google Cloud Professional Developer', issuer: 'Google Cloud', url: 'https://www.credly.com/badges/your-gcp-badge-id/public_url', imageUrl: '/orl.webp' },
+      { name: 'MongoDB Certified Developer', issuer: 'MongoDB', url: 'https://www.credly.com/badges/your-mongodb-badge-id/public_url', imageUrl: '/db.webp' },
+      { name: 'AWS Certified practitioner', issuer: 'Amazon Web Services', url: 'https://www.credly.com/badges/your-aws-practitioner-badge-id/public_url', imageUrl: '/orl.webp' },
+      { name: 'Oracle Cloud Associate', issuer: 'Oracle', url: 'https://www.credly.com/badges/your-oracle-badge-id/public_url', imageUrl: '/ava.webp' }
+    ];
+  });
 
   const [failedImages, setFailedImages] = React.useState<string[]>([]);
 
@@ -1296,7 +1352,7 @@ function App() {
                     </div>
                     <div className="flex-1">
                       <a
-                        href={cert.credentialUrl}
+                        href={cert.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className={`text-base font-semibold transition-colors duration-200 hover:text-blue-500 ${isDarkMode
