@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, ArrowLeft } from 'lucide-react';
 import Lottie from 'lottie-react';
 
-const API_BASE: string = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '');
+const API = import.meta.env.VITE_API_BASE;
 
 export default function AdminLogin(): JSX.Element {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export default function AdminLogin(): JSX.Element {
 
   const sendOtp = async () => {
     setMsg('');
-    if (!API_BASE) {
+    if (!API) {
       setMsg('Service is not configured right now. Please try again later.');
       return;
     }
@@ -44,7 +44,7 @@ export default function AdminLogin(): JSX.Element {
     }
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/auth/request-otp`, {
+      const res = await fetch(`${API}/auth/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -63,22 +63,21 @@ export default function AdminLogin(): JSX.Element {
   const verifyOtp = async (e?: React.FormEvent) => {
     if (e && 'preventDefault' in e) e.preventDefault();
     setMsg('');
-    if (!API_BASE) {
+    if (!API) {
       setMsg('Service is not configured right now. Please try again later.');
       return;
     }
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+      const res = await fetch(`${API}/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data?.success) throw new Error(data?.msg || 'Invalid OTP.');
-      const token: string = data.token || data.accessToken || data.jwt || 'ok';
-      localStorage.setItem('adminToken', token);
-      localStorage.setItem('adminAuthenticated', 'true');
+      if (!data?.token) throw new Error('Invalid login response');
+      localStorage.setItem('token', data.token);
       navigate('/admin/dashboard');
     } catch (err: any) {
       setMsg(err?.message || 'Verification failed');
