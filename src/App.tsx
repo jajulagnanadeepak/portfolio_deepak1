@@ -410,8 +410,8 @@ function App() {
       image: '/iisj.webp'
     },
     {
-      degree: 'Full Stack Web Development Bootcamp',
-      institution: 'TechAcademy',
+      degree: 'Higher Secondary Education',
+      institution: 'Bharatiya Vidya Bhavan School',
       year: '2018-2021',
       description: 'Completed Upper class with focus on science and mathematics. Strengthened analytical skills and developed interest in technology.',
       image: '/bvb.webp'
