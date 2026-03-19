@@ -34,7 +34,7 @@ import {
   Terminal
 } from 'lucide-react';
 
-const API_BASE: string = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '');
+const API = import.meta.env.VITE_API_BASE;
 
 // Use the image placed in `public/photo.webp` so Vite serves it from the root
 const profileImage = '/photo.webp';
@@ -120,7 +120,7 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
       return;
     }
 
-    if (!API_BASE) {
+    if (!API) {
       setSubmitStatus('error');
       setStatusMessage('Failed to send message');
       setIsSubmitting(false);
@@ -128,7 +128,7 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/api/send-message`, {
+      const response = await fetch(`${API}/api/send-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
