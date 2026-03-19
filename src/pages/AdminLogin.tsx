@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, ArrowLeft } from 'lucide-react';
 import Lottie from 'lottie-react';
 
-const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-deepak2.onrender.com').replace(/\/$/, '');
+const API_BASE: string = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '');
 
 export default function AdminLogin(): JSX.Element {
   const navigate = useNavigate();
@@ -34,6 +34,10 @@ export default function AdminLogin(): JSX.Element {
 
   const sendOtp = async () => {
     setMsg('');
+    if (!API_BASE) {
+      setMsg('Service is not configured right now. Please try again later.');
+      return;
+    }
     if (!email) {
       setMsg('Please enter your email to receive OTP.');
       return;
@@ -59,6 +63,10 @@ export default function AdminLogin(): JSX.Element {
   const verifyOtp = async (e?: React.FormEvent) => {
     if (e && 'preventDefault' in e) e.preventDefault();
     setMsg('');
+    if (!API_BASE) {
+      setMsg('Service is not configured right now. Please try again later.');
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`${API_BASE}/auth/verify-otp`, {

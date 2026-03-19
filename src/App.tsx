@@ -34,7 +34,7 @@ import {
   Terminal
 } from 'lucide-react';
 
-const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-deepak2.onrender.com').replace(/\/$/, '');
+const API_BASE: string = (import.meta.env.VITE_API_BASE ?? '').replace(/\/$/, '');
 
 // Use the image placed in `public/photo.webp` so Vite serves it from the root
 const profileImage = '/photo.webp';
@@ -106,29 +106,49 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
+    const trimmedData = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      subject: formData.subject.trim(),
+      message: formData.message.trim()
+    };
+
+    if (!trimmedData.name || !trimmedData.email || !trimmedData.subject || !trimmedData.message) {
+      setSubmitStatus('error');
+      setStatusMessage('Failed to send message');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!API_BASE) {
+      setSubmitStatus('error');
+      setStatusMessage('Failed to send message');
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await fetch(`${API_BASE}/send-message`, {
+      const response = await fetch(`${API_BASE}/api/send-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(trimmedData),
       });
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
 
-      if (result.success) {
+      if (response.ok && result.success) {
         setSubmitStatus('success');
-        setStatusMessage('Message sent successfully! I\'ll get back to you soon.');
+        setStatusMessage('Message sent successfully');
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         setSubmitStatus('error');
-        setStatusMessage(result.msg || 'Failed to send message. Please try again.');
+        setStatusMessage(result.msg || 'Failed to send message');
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus('error');
-      setStatusMessage('Network error. Please check your connection and try again.');
-      console.error('Contact form error:', error);
+      setStatusMessage('Failed to send message');
     } finally {
       setIsSubmitting(false);
     }
@@ -241,7 +261,7 @@ const ContactForm: React.FC<{ isDarkMode: boolean }> = ({ isDarkMode }) => {
         {isSubmitting ? (
           <>
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-            Sending Message...
+            Sending...
           </>
         ) : (
           <>
