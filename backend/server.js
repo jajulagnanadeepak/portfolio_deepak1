@@ -1,44 +1,53 @@
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
+import express from "express";
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+import nodemailer from "nodemailer";
 
-// Load environment variables
+import User from "./models/user.js";
+import Admin from "./models/admin.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import certificationRoutes from "./routes/certificationRoutes.js";
+
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Security middleware
-app.use(helmet());
+/* =====================================================
+   TRUST PROXY (Required for Render)
+===================================================== */
+app.set("trust proxy", 1);
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
-app.use(limiter);
+/* =====================================================
+   MIDDLEWARE
+===================================================== */
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration - IMPORTANT for frontend → backend communication
-app.use(cors({
-  origin: [
-    'http://localhost:3000',    // React dev server
-    'http://localhost:5173',    // Vite dev server
-    'http://localhost:4173',    // Vite preview
-    'https://yourdomain.com'    // Production domain (replace with your actual domain)
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      const allowedOrigins = (process.env.CORS_ORIGIN || "*")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 // Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
@@ -311,12 +320,19 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📧 Email notifications: ${process.env.EMAIL_USER ? 'Enabled' : 'Disabled'}`);
-  console.log(`🗄️  MongoDB: ${MONGODB_URI}`);
 });
 
-export default app;
+/* =====================================================
+   GRACEFUL SHUTDOWN
+===================================================== */
+process.on("SIGTERM", () => {
+  mongoose.connection.close(() => {
+    console.log("MongoDB closed");
+    process.exit(0);
+  });
+});
 
 

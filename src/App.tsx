@@ -34,7 +34,7 @@ import {
   Terminal
 } from 'lucide-react';
 
-const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-back-hdau.onrender.com').replace(/\/$/, '');
+const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-deepak2.onrender.com').replace(/\/$/, '');
 
 // Use the image placed in `public/photo.webp` so Vite serves it from the root
 const profileImage = '/photo.webp';

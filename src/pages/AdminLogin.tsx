@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, ArrowLeft } from 'lucide-react';
 import Lottie from 'lottie-react';
 
-const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-back-hdau.onrender.com').replace(/\/$/, '');
+const API_BASE: string = ((import.meta as any).env?.VITE_API_BASE || 'https://portfolio-deepak2.onrender.com').replace(/\/$/, '');
 
 export default function AdminLogin(): JSX.Element {
   const navigate = useNavigate();
