@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Scale entire site slightly smaller: set root font-size to 90% so rem-based Tailwind units shrink */
 html {
