@@ -2434,7 +2434,7 @@ function App() {
 
                 {/* GitHub */}
                 <a
-                  href="https://github.com/jajulagnadeepak"
+                  href="https://github.com/jajulagnanadeepak"
                   aria-label="GitHub"
                   target="_blank"
                   rel="noopener noreferrer"
