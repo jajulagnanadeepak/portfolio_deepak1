@@ -1549,6 +1549,199 @@ function App() {
 
 
       {/* ======================================================
+          PROJECTS
+      ====================================================== */}
+
+      <section
+        id="projects"
+        className={`py-20 ${isDarkMode
+          ? "bg-gray-800"
+          : "bg-gradient-to-br from-white via-blue-50 to-purple-50"
+          }`}
+      >
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center mb-14">
+
+            <h2 className="text-3xl md:text-4xl font-bold">
+
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Featured Projects
+              </span>
+
+            </h2>
+
+            <p
+              className={`mt-4 max-w-2xl mx-auto ${isDarkMode
+                ? "text-gray-300"
+                : "text-gray-600"
+                }`}
+            >
+              A selection of AI, data engineering, full-stack,
+              analytics, and cloud-native projects.
+            </p>
+
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {projects.map((project, index) => (
+
+              <div
+                key={`${project.title}-${index}`}
+                className={`group rounded-2xl overflow-hidden border shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all ${isDarkMode
+                  ? "bg-gray-900 border-gray-700"
+                  : "bg-white border-gray-200"
+                  }`}
+              >
+
+                {/* Image */}
+                <div className="h-40 overflow-hidden">
+
+                  {project.imageUrl ? (
+
+                    <img
+                      src={project.imageUrl}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+
+                  ) : (
+
+                    <div className="w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center">
+
+                      <Code
+                        size={42}
+                        className="text-white opacity-80"
+                      />
+
+                    </div>
+
+                  )}
+
+                </div>
+
+
+                {/* Content */}
+                <div className="p-6">
+
+                  <h3
+                    className={`text-xl font-bold mb-3 ${isDarkMode
+                      ? "text-white"
+                      : "text-gray-900"
+                      }`}
+                  >
+                    {project.title}
+                  </h3>
+
+
+                  <p
+                    className={`text-sm leading-relaxed mb-5 ${isDarkMode
+                      ? "text-gray-300"
+                      : "text-gray-600"
+                      }`}
+                  >
+                    {project.description}
+                  </p>
+
+
+                  <div className="flex flex-wrap gap-2 mb-5">
+
+                    {project.technologies.map(
+                      (technology) => (
+
+                        <span
+                          key={technology}
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${isDarkMode
+                            ? "bg-gray-800 text-gray-300"
+                            : "bg-gray-100 text-gray-700"
+                            }`}
+                        >
+                          {technology}
+                        </span>
+
+                      )
+                    )}
+
+                  </div>
+
+
+                  {/* Buttons only when URL exists */}
+                  {(project.liveUrl ||
+                    project.githubUrl) && (
+
+                      <div className="flex gap-3">
+
+                        {project.liveUrl &&
+                          project.liveUrl.trim() !== "" && (
+
+                            project.liveUrl.startsWith(
+                              "/demo/"
+                            ) ? (
+
+                              <Link
+                                to={project.liveUrl}
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+                              >
+                                <ExternalLink
+                                  size={15}
+                                />
+                                Live Demo
+                              </Link>
+
+                            ) : (
+
+                              <a
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+                              >
+                                <ExternalLink
+                                  size={15}
+                                />
+                                Live Demo
+                              </a>
+
+                            )
+                          )}
+
+
+                        {project.githubUrl &&
+                          project.githubUrl.trim() !== "" && (
+
+                            <a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold hover:bg-gray-700 transition-colors"
+                            >
+                              <Github size={15} />
+                              GitHub
+                            </a>
+
+                          )}
+
+                      </div>
+
+                    )}
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* ======================================================
           EXPERIENCE
       ====================================================== */}
 
@@ -1852,199 +2045,6 @@ function App() {
               </ul>
 
             </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* ======================================================
-          PROJECTS
-      ====================================================== */}
-
-      <section
-        id="projects"
-        className={`py-20 ${isDarkMode
-          ? "bg-gray-800"
-          : "bg-gradient-to-br from-white via-blue-50 to-purple-50"
-          }`}
-      >
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          <div className="text-center mb-14">
-
-            <h2 className="text-3xl md:text-4xl font-bold">
-
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Featured Projects
-              </span>
-
-            </h2>
-
-            <p
-              className={`mt-4 max-w-2xl mx-auto ${isDarkMode
-                ? "text-gray-300"
-                : "text-gray-600"
-                }`}
-            >
-              A selection of AI, data engineering, full-stack,
-              analytics, and cloud-native projects.
-            </p>
-
-          </div>
-
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            {projects.map((project, index) => (
-
-              <div
-                key={`${project.title}-${index}`}
-                className={`group rounded-2xl overflow-hidden border shadow-lg hover:-translate-y-2 hover:shadow-2xl transition-all ${isDarkMode
-                  ? "bg-gray-900 border-gray-700"
-                  : "bg-white border-gray-200"
-                  }`}
-              >
-
-                {/* Image */}
-                <div className="h-40 overflow-hidden">
-
-                  {project.imageUrl ? (
-
-                    <img
-                      src={project.imageUrl}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-
-                  ) : (
-
-                    <div className="w-full h-full bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center">
-
-                      <Code
-                        size={42}
-                        className="text-white opacity-80"
-                      />
-
-                    </div>
-
-                  )}
-
-                </div>
-
-
-                {/* Content */}
-                <div className="p-6">
-
-                  <h3
-                    className={`text-xl font-bold mb-3 ${isDarkMode
-                      ? "text-white"
-                      : "text-gray-900"
-                      }`}
-                  >
-                    {project.title}
-                  </h3>
-
-
-                  <p
-                    className={`text-sm leading-relaxed mb-5 ${isDarkMode
-                      ? "text-gray-300"
-                      : "text-gray-600"
-                      }`}
-                  >
-                    {project.description}
-                  </p>
-
-
-                  <div className="flex flex-wrap gap-2 mb-5">
-
-                    {project.technologies.map(
-                      (technology) => (
-
-                        <span
-                          key={technology}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium ${isDarkMode
-                            ? "bg-gray-800 text-gray-300"
-                            : "bg-gray-100 text-gray-700"
-                            }`}
-                        >
-                          {technology}
-                        </span>
-
-                      )
-                    )}
-
-                  </div>
-
-
-                  {/* Buttons only when URL exists */}
-                  {(project.liveUrl ||
-                    project.githubUrl) && (
-
-                      <div className="flex gap-3">
-
-                        {project.liveUrl &&
-                          project.liveUrl.trim() !== "" && (
-
-                            project.liveUrl.startsWith(
-                              "/demo/"
-                            ) ? (
-
-                              <Link
-                                to={project.liveUrl}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
-                              >
-                                <ExternalLink
-                                  size={15}
-                                />
-                                Live Demo
-                              </Link>
-
-                            ) : (
-
-                              <a
-                                href={project.liveUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
-                              >
-                                <ExternalLink
-                                  size={15}
-                                />
-                                Live Demo
-                              </a>
-
-                            )
-                          )}
-
-
-                        {project.githubUrl &&
-                          project.githubUrl.trim() !== "" && (
-
-                            <a
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold hover:bg-gray-700 transition-colors"
-                            >
-                              <Github size={15} />
-                              GitHub
-                            </a>
-
-                          )}
-
-                      </div>
-
-                    )}
-
-                </div>
-
-              </div>
-
-            ))}
 
           </div>
 
@@ -2419,7 +2419,8 @@ function App() {
 
                 {/* LinkedIn */}
                 <a
-                  href="#"
+                  href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375"
+                  aria-label="LinkedIn"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-xl bg-blue-100
@@ -2433,7 +2434,8 @@ function App() {
 
                 {/* GitHub */}
                 <a
-                  href="#"
+                  href="https://github.com/jajulagnadeepak"
+                  aria-label="GitHub"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-xl bg-slate-200
@@ -2541,26 +2543,26 @@ function App() {
               <div className="flex gap-4">
 
                 {/* LinkedIn */}
-                <a
-                  href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                  className="text-gray-300 hover:text-blue-400 transition-colors"
-                >
-                  <Linkedin size={23} />
-                </a>
+<a
+  href="https://www.linkedin.com/in/jajula-gnana-deepak-a84a41375"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="LinkedIn"
+  className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-200 transition-colors"
+>
+  <Linkedin size={23} />
+</a>
 
-                {/* GitHub */}
-                <a
-                  href="https://github.com/jajulagnanadeepak"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  <Github size={23} />
-                </a>
+{/* GitHub */}
+<a
+  href="https://github.com/jajulagnanadeepak"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="GitHub"
+  className="w-11 h-11 rounded-xl bg-slate-200 flex items-center justify-center text-slate-800 hover:bg-slate-300 transition-colors"
+>
+  <Github size={23} />
+</a>
 
                 {/* Email */}
                 <a
