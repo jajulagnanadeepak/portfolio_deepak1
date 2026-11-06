@@ -17,14 +17,6 @@ export const projects: Project[] = [
     imageUrl: "https://scx2.b-cdn.net/gfx/news/2025/new-health-record-syst.jpg",
   },
   {
-    title: "Online Food Ordering System",
-    description: "Online food ordering application.",
-    technologies: ["React", "Node.js", "Express"],
-    liveUrl: "http://www.tastoria.in/",
-    githubUrl: "https://github.com/jajulagnanadeepak/tastoria_front.git",
-    imageUrl: "https://www.foodiv.com/wp-content/uploads/2023/06/online-ordering-business.jpg",
-  },
-  {
     title: "Fresh & Healthy Fruit Bowls Website",
     description: "Fresh and healthy fruit bowl website.",
     technologies: ["React", "CSS"],
@@ -47,20 +39,6 @@ export const projects: Project[] = [
     liveUrl: "",
     githubUrl: "",
     imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUvHvd7KTtG8Bkyi0srQ4JHqqqvlrBgE-mBjvzyk_rikKc_HTDfNsirCih&s=10",
-  },
-  {
-    title: "MediBots – AI Healthcare Assistant",
-    description:
-      "AI healthcare assistant project.",
-    technologies: [
-      "Python",
-      "AI",
-      "LLMs",
-      "RAG",
-    ],
-    liveUrl: "https://medibots-healthcare.vercel.app/dashboard",
-    githubUrl: "https://github.com/jajulagnanadeepak/medibots_healthcare.git",
-    imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfMa3Wm73EKF2tBk5KyhFdhNsXn1pcLy5cXUF17NnZtA&s=10",
   },
   {
     title: "Power BI Sales Intelligence Dashboard",
